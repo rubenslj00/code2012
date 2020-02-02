@@ -1,1 +1,3 @@
-# code2012
+# maven-project
+
+Simple Maven Project
