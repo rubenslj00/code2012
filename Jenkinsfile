@@ -22,21 +22,24 @@ pipeline {
       steps {
         withCredentials(bindings: [usernamePassword(credentialsId: 'snowflake_creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
           sh '''
-              sqitch deploy "db:snowflake://$USERNAME:$PASSWORD@hashmap.snowflakecomputing.com/flipr?Driver=Snowflake;warehouse=sqitch_wh"
+              sqitch deploy "db:snowflake://$USERNAME:$PASSWORD@@moffitt.us-east-1.privatelink.snowflakecomputing.com/mcap_dev?Driver=SnowflakeDSIIDriver;warehouse=ETL_DEV"
               '''           
         }
       }
     }
-    stage('Verify changes') {
+      stage('Verify changes') {
       steps {
         withCredentials(bindings: [usernamePassword(credentialsId: 'snowflake_creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
           sh '''
-              sqitch verify "db:snowflake://$USERNAME:$PASSWORD@hashmap.snowflakecomputing.com/flipr?Driver=Snowflake;warehouse=sqitch_wh"
+              sqitch verify "db:snowflake://$USERNAME:$PASSWORD@@moffitt.us-east-1.privatelink.snowflakecomputing.com/mcap_dev?Driver=SnowflakeDSIIDriver;warehouse=ETL_DEV"
               ''' 
         }
       }
-      post {
+    }
+  }
+  post {
     always {
       sh 'chmod -R 777 .'
     }
   }
+}
